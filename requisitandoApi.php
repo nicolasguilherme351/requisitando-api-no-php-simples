@@ -7,11 +7,9 @@
 </head>
 <body>
     <h1>Requisitando api</h1>
-    <h2>descubra sua rua(logradouro) a partir do cep</h2>
 
     <form action="" method="post">
-        digite seu cep:
-        <input type="text" name="cep" id="">
+        <p>Veja todos os professores e suas turmas: </p>
         <button type="submit">enviar</button>
     </form>
     <br>
@@ -21,9 +19,8 @@
 <?php
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $cep = $_POST['cep'];
 
-    $url = "https://viacep.com.br/ws/$cep/json/";
+    $url = "localhost:8080/professores";
     $ch = curl_init(); // Inicia a sessão cURL
 
     // Define a URL e o método GET (por padrão já é GET, mas é bom explicitar)
@@ -37,8 +34,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo 'Erro cURL: ' . curl_error($ch);
     } else {
 
-        $data = json_decode($response, true);
-        print_r("Este é sua rua(logradouro): " . $data['logradouro']);
+        
+        $arrayDeArrays = json_decode($response, true);
+        // 2. Acessar os dados (ex: percorrer o array)
+        foreach ($arrayDeArrays as $subArray) {
+            echo $subArray["nome"] . ": <br>";
+            $quantidadeTurmas = count($subArray["turmas"]);
+            for ($i=0; $i < $quantidadeTurmas; $i++) { 
+                echo $subArray["turmas"][$i]["nome"] . "<br>";
+            }
+        }
     }
 
     curl_close($ch);
